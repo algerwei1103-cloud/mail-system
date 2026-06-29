@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>實體信件管理系統</title>
+    <style>
+        /* CSS 變數：定義衛達專屬的流暢 APP 視覺 */
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 15px; padding-bottom: 80px; }
+
+        /* 類 APP 容器 */
+        .app-container { max-width: 500px; margin: 0 auto; }
+        .app-header { margin-bottom: 20px; text-align: center; }
+        .app-header h2 { font-size: 1.4rem; color: #1a1a1a; }
+
+        /* 大按鈕分類選擇器 */
+        .type-selector { display: flex; gap: 15px; margin-bottom: 20px; }
+        .type-btn { flex: 1; position: relative; cursor: pointer; }
+        .type-btn input[type="radio"] { position: absolute; opacity: 0; }
+        .btn-content { 
+            background: var(--card-bg); padding: 18px; text-align: center; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s;
+        }
+        .type-btn input[type="radio"]:checked + .btn-content {
+            border-color: var(--primary-color); color: var(--primary-color); background: #e6f0ff; transform: scale(0.98);
+        }
+
+        /* 表單與輸入框 */
+        .main-form { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .form-group-toggle { display: none; } /* 預設隱藏，由 JS 控制顯示 */
+        .form-group-toggle.is-active { display: block; animation: fadeIn 0.3s ease; }
+
+        .input-item { margin-bottom: 15px; }
+        .input-item label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: #555; }
+        .input-item input, .input-item select {
+            width: 100%; height: 48px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;
+        }
+        .input-item input:focus, .input-item select:focus { border-color: var(--primary-color); }
+
+        /* 拍照上傳區 */
+        .photo-upload-area { margin-top: 20px; border: 2px dashed #bbb; border-radius: 12px; padding: 20px; text-align: center; background: #fafafa; }
+        .camera-btn input[type="file"] { display: none; }
+        .upload-placeholder { cursor: pointer; }
+        .upload-placeholder i { font-size: 2rem; display: block; margin-bottom: 5px; }
+        
+        /* 圖片預覽 */
+        .preview-box img { max-width: 100%; max-height: 200px; margin-top: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+        /* 底部固定大按鈕 */
+        .submit-btn {
+            position: fixed; bottom: 15px; left: 15px; right: 15px; max-width: 470px; margin: 0 auto;
+            height: 54px; background: var(--primary-color); color: white; border: none; border-radius: 27px;
+            font-size: 1.1rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,123,255,0.3); z-index: 100;
+        }
+        .submit-btn:active { background: #0056b3; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <h2>實體信件智慧管理系統</h2>
+        </header>
+
+        <section class="type-selector">
+            <label class="type-btn">
+                <input type="radio" name="mailType" value="發件" id="btn-send">
+                <div class="btn-content">📤 發件</div>
+            </label>
+            <label class="type-btn">
+                <input type="radio" name="mailType" value="收件" id="btn-receive">
+                <div class="btn-content">📥 收件</div>
+            </label>
+        </section>
+
+        <form id="mail-form" class="main-form" style="display: none;">
+            
+            <div id="group-send" class="form-group-toggle">
+                <div class="input-item"><label>日期</label><input type="date" id="send-date"></div>
+                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder="請輸入寄件人"></div>
+                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder="請輸入收件人"></div>
+                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder="例：合約正本、認證公文"></div>
+                <div class="input-item">
+                    <label>寄件管道</label>
+                    <select id="send-logistics">
+                        <option value="郵局">郵局</option>
+                        <option value="新竹物流">新竹物流</option>
+                        <option value="蝦皮">蝦皮</option>
+                        <option value="親送">親送</option>
+                        <option value="自取">自取</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="input-item" id="track-code-item">
+                    <label>寄件追蹤碼 (單號)</label>
+                    <input type="text" id="send-track-code" placeholder="請輸入物流單號">
+                </div>
+            </div>
+
+            <div id="group-receive" class="form-group-toggle">
+                <div class="input-item"><label>日期</label><input type="date" id="receive-date"></div>
+                <div class="input-item"><label>寄件人 (外部對象)</label><input type="text" id="receive-shipper" placeholder="請輸入寄件單位或個人"></div>
+                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary" placeholder="例：五月份發票、主管機關公文"></div>
+                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone" placeholder="請輸入對方或貨運電話"></div>
+                <div class="input-item"><label>收件人 (內部同仁)</label><input type="text" id="receive-receiver" placeholder="請輸入公司內部收件人"></div>
+            </div>
+
+            <div class="photo-upload-area">
+                <label class="camera-btn">
+                    <input type="file" accept="image/*" capture="environment" id="photo-input">
+                    <div class="upload-placeholder">
+                        <i>📷</i>
+                        <p id="upload-text">點擊開啟相機拍照 / 上傳單據</p>
+                    </div>
+                </label>
+                <div id="photo-preview" class="preview-box"></div>
+            </div>
+
+            <button type="submit" class="submit-btn">確認歸檔備份</button>
+        </form>
+    </div>
+
+    <script>
+        // --- 替換成你部署好 GAS 後取得的網頁應用程式網址 ---
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhWDAB-zlRL_b7FhHLr41g_DPK8GhngaHulw79qpLgzCadwcVArk-oOh2N_iBSYVdHSg/exec"; 
+
+        let currentType = "";
+        let base64PhotoData = ""; // 用來存儲壓縮後的圖片字串
+        let photoFileName = "";   // 依照公式自動生成的檔名
+
+        // 預設日期為今天
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('send-date').value = today;
+        document.getElementById('receive-date').value = today;
+
+        // 1. 監聽分類切換 (發件/收件)
+        document.querySelectorAll('input[name="mailType"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                currentType = e.target.value;
+                document.getElementById('mail-form').style.display = 'block';
+                
+                if(currentType === '發件') {
+                    document.getElementById('group-send').classList.add('is-active');
+                    document.getElementById('group-receive').classList.remove('is-active');
+                } else {
+                    document.getElementById('group-receive').classList.add('is-active');
+                    document.getElementById('group-send').classList.remove('is-active');
+                }
+            });
+        });
+
+        // 發件管道連動：若選親送或自取，隱藏單號輸入框
+        document.getElementById('send-logistics').addEventListener('change', (e) => {
+            const trackItem = document.getElementById('track-code-item');
+            if(e.target.value === '親送' || e.target.value === '自取') {
+                trackItem.style.display = 'none';
+                document.getElementById('send-track-code').value = '無';
+            } else {
+                trackItem.style.display = 'block';
+                document.getElementById('send-track-code').value = '';
+            }
+        });
+
+        // 2. 監聽照片拍攝/上傳，並在前端進行圖片壓縮
+        document.getElementById('photo-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('upload-text').innerText = "圖片處理中...";
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    // 使用 Canvas 壓縮圖片（設定最大寬度為 1200 像素，維持比例）
+                    const canvas = document.createElement('canvas');
+                    const max_width = 1200;
+                    const scale = max_width / img.width;
+                    
+                    if (img.width > max_width) {
+                        canvas.width = max_width;
+                        canvas.height = img.height * scale;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // 壓縮為 jpeg，品質 0.7 (大幅縮減容量且維持清晰度)
+                    base64PhotoData = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+
+                    // 顯示預覽圖
+                    const previewZone = document.getElementById('photo-preview');
+                    previewZone.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}">`;
+                    document.getElementById('upload-text').innerText = "單據拍照完成！";
+                }
+            };
+        });
+
+        // 3. 表單送出：依照公式自動命名，並 POST 給 GAS
+        document.getElementById('mail-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if(!base64PhotoData) {
+                alert("請先拍攝或上傳單據照片！");
+                return;
+            }
+
+            let payload = { mailType: currentType, photoData: base64PhotoData };
+            let rawDate = "";
+
+            // 根據分類抓取特定欄位，並依公式自動組裝檔名
+            if (currentType === '發件') {
+                rawDate = document.getElementById('send-date').value; // YYYY-MM-DD
+                const cleanDate = rawDate.replace(/-/g, ''); // YYYYMMDD
+                const shipper = document.getElementById('send-shipper').value || '未填';
+                const receiver = document.getElementById('send-receiver').value || '未填';
+                const logistics = document.getElementById('send-logistics').value;
+                
+                // 自動組裝發件檔名
+                photoFileName = `${cleanDate}_發件_${shipper}_${receiver}_${logistics}.jpg`;
+
+                payload.date = rawDate;
+                payload.shipper = shipper;
+                payload.receiver = receiver;
+                payload.content = document.getElementById('send-content').value;
+                payload.logistics = logistics;
+                payload.trackCode = document.getElementById('send-track-code').value;
+                payload.fileName = photoFileName;
+            } else {
+                rawDate = document.getElementById('receive-date').value;
+                const cleanDate = rawDate.replace(/-/g, '');
+                const shipper = document.getElementById('receive-shipper').value || '未填';
+                const summary = document.getElementById('receive-summary').value || '未填';
+                const receiver = document.getElementById('receive-receiver').value || '未填';
+
+                // 自動組裝收件檔名
+                photoFileName = `${cleanDate}_收件_${shipper}_${summary}_${receiver}.jpg`;
+
+                payload.date = rawDate;
+                payload.shipper = shipper;
+                payload.summary = summary;
+                payload.phone = document.getElementById('receive-phone').value;
+                payload.receiver = receiver;
+                payload.fileName = photoFileName;
+            }
+
+            // 顯示送出中狀態
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.innerText = "歸檔上傳中，請稍候...";
+            submitBtn.disabled = true;
+
+            // 將打包好的資料發送給 GAS Web App
+            fetch(GAS_WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.status === "success") {
+                    alert("歸檔成功！照片已自動命名並備份至雲端。");
+                    location.reload(); // 成功後重新整理網頁，清空表單
+                } else {
+                    alert("上傳失敗：" + result.message);
+                    submitBtn.innerText = "確認歸檔備份";
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(err => {
+                alert("網路連線錯誤或系統異常，請稍後再試。");
+                submitBtn.innerText = "確認歸檔備份";
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
