@@ -2,405 +2,325 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>實體信件管理系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信件收發管理系統</title>
     <style>
-        /* CSS 變數：定義專屬的流暢 APP 視覺 */
         :root {
-            --primary-color: #007bff;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
+            --primary-color: #2b579a;
+            --secondary-color: #f2f4f7;
+            --text-color: #333;
+            --border-color: #ddd;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding: 15px; padding-bottom: 100px; }
-
-        /* 類 APP 容器 */
-        .app-container { max-width: 500px; margin: 0 auto; }
-        .app-header { margin-bottom: 20px; text-align: center; }
-        .app-header h2 { font-size: 1.4rem; color: #1a1a1a; }
-
-        /* 大按鈕分類選擇器 */
-        .type-selector { display: flex; gap: 15px; margin-bottom: 20px; }
-        .type-btn { flex: 1; position: relative; cursor: pointer; }
-        .type-btn input[type="radio"] { position: absolute; opacity: 0; }
-        .btn-content { 
-            background: var(--card-bg); padding: 18px; text-align: center; border-radius: 12px;
-            font-size: 1.1rem; font-weight: bold; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s;
-        }
-        .type-btn input[type="radio"]:checked + .btn-content {
-            border-color: var(--primary-color); color: var(--primary-color); background: #e6f0ff; transform: scale(0.98);
-        }
-
-        /* 表單與輸入框 */
-        .main-form { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .form-group-toggle { display: none; } /* 預設隱藏，由 JS 控制顯示 */
-        .form-group-toggle.is-active { display: block; animation: fadeIn 0.3s ease; }
-
-        .input-item { margin-bottom: 15px; }
-        .input-item label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: #555; }
-        .input-item input, .input-item select {
-            width: 100%; height: 48px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;
-        }
-        .input-item input:focus, .input-item select:focus { border-color: var(--primary-color); }
-
-        /* 提示修改狀態條 */
-        .update-mode-banner { display: none; background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; border-left: 5px solid #ffc107; }
-
-        /* 拍照上傳區 */
-        .photo-upload-area { margin-top: 20px; border: 2px dashed #bbb; border-radius: 12px; padding: 20px; text-align: center; background: #fafafa; }
-        .camera-btn input[type="file"] { display: none; }
-        .upload-placeholder { cursor: pointer; }
-        .upload-placeholder i { font-size: 2rem; display: block; margin-bottom: 5px; }
-        
-        /* 圖片預覽 */
-        .preview-box img { max-width: 100%; max-height: 200px; margin-top: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-
-        /* 底部固定大按鈕 */
-        .submit-btn {
-            position: fixed; bottom: 15px; left: 15px; right: 15px; max-width: 470px; margin: 0 auto;
-            height: 54px; background: var(--primary-color); color: white; border: none; border-radius: 27px;
-            font-size: 1.1rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,123,255,0.3); z-index: 100;
-        }
-        .submit-btn:active { background: #0056b3; }
-
-        /* 歷史紀錄卡片視覺 */
-        .record-card { background: white; padding: 14px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.04); border-left: 5px solid #ddd; }
-        .record-card-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 6px; }
-        .record-card-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 4px; color: #1a1a1a; }
-        .record-card-detail { font-size: 0.85rem; color: #666; }
-        .fix-btn { margin-top: 8px; background: #ffc107; color: #212529; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; width: 100%; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Microsoft JhengHei", sans-serif; }
+        body { background-color: #f5f7fa; padding: 15px; color: var(--text-color); }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary-color); margin-bottom: 20px; font-size: 22px; }
+        .tab-group { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); }
+        .tab { flex: 1; text-align: center; padding: 12px; font-weight: bold; cursor: pointer; color: #666; transition: 0.3s; }
+        .tab.active { color: var(--primary-color); border-bottom: 3px solid var(--primary-color); background: #f0f4f8; border-radius: 8px 8px 0 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; }
+        input[type="text"], input[type="date"], textarea, select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; }
+        textarea { resize: vertical; height: 80px; }
+        .photo-section { background: var(--secondary-color); padding: 15px; border-radius: 8px; text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 15px; cursor: pointer; position: relative; }
+        .photo-section input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .preview-img { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 6px; display: none; }
+        .btn { width: 100%; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        .btn:hover { background: #1e3d73; }
+        .loading { display: none; text-align: center; color: #666; margin: 10px 0; font-weight: bold; }
+        .history-section { margin-top: 25px; border-top: 2px solid var(--border-color); padding-top: 20px; }
+        .history-title { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: var(--primary-color); display: flex; justify-content: space-between; align-items: center; }
+        .history-card { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; }
+        .history-card.clickable { cursor: pointer; transition: 0.2s; }
+        .history-card.clickable:hover { border-color: var(--primary-color); background-color: #f9fbfd; }
+        .history-type { position: absolute; top: 12px; right: 12px; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .type-receive { background: #e0f2fe; color: #0369a1; }
+        .type-send { background: #fef3c7; color: #b45309; }
+        .history-detail { font-size: 13.5px; margin-bottom: 4px; line-height: 1.4; }
+        .history-detail b { color: #555; }
+        .tracking-btn { background: #10b981; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; float: right; margin-top: -2px; }
+        .tracking-btn:hover { background: #059669; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <header class="app-header">
-            <h2>實體信件智慧管理系統</h2>
-        </header>
-
-        <section class="type-selector">
-            <label class="type-btn">
-                <input type="radio" name="mailType" value="發件" id="btn-send">
-                <div class="btn-content">📤 發件</div>
-            </label>
-            <label class="type-btn">
-                <input type="radio" name="mailType" value="收件" id="btn-receive">
-                <div class="btn-content">📥 收件</div>
-            </label>
-        </section>
-
-        <form id="mail-form" class="main-form" style="display: none;">
-            
-            <div id="update-banner" class="update-mode-banner">
-                ✏️ 目前正在執行「補填追蹤碼」模式，送出後將直接更新原紀錄。
-            </div>
-
-            <div id="group-send" class="form-group-toggle">
-                <div class="input-item"><label>日期</label><input type="date" id="send-date"></div>
-                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder="請輸入寄件人"></div>
-                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder="請輸入收件人"></div>
-                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder=""></div>
-                <div class="input-item">
-                    <label>寄件管道</label>
-                    <select id="send-logistics">
-                        <option value="">-- 請選擇物流管道 --</option>
-                        <option value="郵局">郵局</option>
-                        <option value="新竹物流">新竹物流</option>
-                        <option value="蝦皮">蝦皮</option>
-                        <option value="親送">親送</option>
-                        <option value="自取">自取</option>
-                        <option value="其他">其他</option>
-                    </select>
-                </div>
-                <div class="input-item" id="track-code-item">
-                    <label>寄件追蹤碼<span style="color:#888;font-weight:normal;">(若無請填"無")</span></label>
-                    <input type="text" id="send-track-code" placeholder="">
-                </div>
-            </div>
-
-            <div id="group-receive" class="form-group-toggle">
-                <div class="input-item"><label>日期</label><input type="date" id="receive-date"></div>
-                <div class="input-item"><label>寄件人（外部對象）</label><input type="text" id="receive-shipper" placeholder="請輸入寄件單位或個人"></div>
-                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary" placeholder=""></div>
-                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone" placeholder=""></div>
-                <div class="input-item"><label>收件人（內部同仁）</label><input type="text" id="receive-receiver" placeholder="請輸入公司內部收件人"></div>
-            </div>
-
-            <div class="photo-upload-area">
-                <label class="camera-btn">
-                    <input type="file" accept="image/*" id="photo-input">
-                    <div class="upload-placeholder">
-                        <i>📷</i>
-                        <p id="upload-text">點擊拍照 / 從相簿選擇單據</p>
-                    </div>
-                </label>
-                <div id="photo-preview" class="preview-box"></div>
-            </div>
-
-            <button type="submit" class="submit-btn">確認歸檔備份</button>
-        </form>
-
-        <section id="latest-records-zone" style="display: none; margin-bottom: 40px;">
-            <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: #555; display: flex; align-items: center; gap: 6px;">
-                <span>📋</span> 最近 5 筆紀錄
-            </h3>
-            <div id="records-list"></div>
-        </section>
+<div class="container">
+    <h2 id="pageTitle">信件收發管理系統</h2>
+    
+    <div class="tab-group">
+        <div class="tab active" onclick="switchTab('收件')">📥 登記收件</div>
+        <div class="tab" onclick="switchTab('發件')">📤 登記發件</div>
     </div>
 
-    <script>
-        // --- ⚠️ 請務必確認這裡的網址與你最新部署的 GAS 網址完全一致 ---
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhWDAB-zlRL_b7FhHLr41g_DPK8GhngaHulw79qpLgzCadwcVArk-oOh2N_iBSYVdHSg/exec"; 
+    <form id="mainForm">
+        <div class="form-group">
+            <label>日期</label>
+            <input type="date" id="date" required>
+        </div>
 
-        let currentType = "";
-        let base64PhotoData = ""; // 存儲壓縮後的圖片字串
-        let photoFileName = "";   // 自動生成的檔名
-        let currentUpdateId = ""; // 用來判定是否處於補填修改模式
+        <div class="form-group" id="shipperGroup">
+            <label id="shipperLabel">寄件人 / 單位</label>
+            <input type="text" id="shipper" placeholder="" required>
+        </div>
 
-        // 預設日期為今天
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('send-date').value = today;
-        document.getElementById('receive-date').value = today;
+        <div class="form-group" id="receiverGroup">
+            <label>收件人</label>
+            <input type="text" id="receiver" placeholder="" required>
+        </div>
 
-        // 1. 監聽分類切換 (發件/收件)
-        document.querySelectorAll('input[name="mailType"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                currentType = e.target.value;
-                resetFormInputs(); // 切換時清空舊欄位，離開可能的修改模式
-                document.getElementById('mail-form').style.display = 'block';
-                
-                if(currentType === '發件') {
-                    document.getElementById('group-send').classList.add('is-active');
-                    document.getElementById('group-receive').classList.remove('is-active');
-                } else {
-                    document.getElementById('group-receive').classList.add('is-active');
-                    document.getElementById('group-send').classList.remove('is-active');
-                }
+        <div class="form-group">
+            <label>摘要說明</label>
+            <textarea id="summary" placeholder="" required></textarea>
+        </div>
 
-                // 👉 切換分類時，同步呼叫後端讀取最近五筆紀錄
-                fetchLatestRecords(currentType);
-            });
-        });
+        <div class="form-group">
+            <label id="phoneLabel">聯絡電話</label>
+            <input type="text" id="phone" placeholder="" required>
+        </div>
 
-        // 發件管道連動：若選親送或自取，自動將單號設定為無
-        document.getElementById('send-logistics').addEventListener('change', (e) => {
-            const trackItem = document.getElementById('track-code-item');
-            if(e.target.value === '親送' || e.target.value === '自取') {
-                document.getElementById('send-track-code').value = '無';
-            } else if(document.getElementById('send-track-code').value === '無') {
-                document.getElementById('send-track-code').value = '';
-            }
-        });
+        <div class="photo-section" id="photoDropZone">
+            <span id="uploadText">📸 點擊拍照或選擇單據檔案</span>
+            <input type="file" id="photoFile" accept="image/*">
+            <img id="preview" class="preview-img" src="" alt="預覽圖">
+        </div>
 
-        // 2. 監聽照片選擇，並在手機端進行即時 Canvas 圖片壓縮
-        document.getElementById('photo-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        <div class="loading" id="loadingStatus">⏳ 正在處理中，請稍候...</div>
+        <button type="submit" class="btn" id="submitBtn">確認提交儲存</button>
+    </form>
 
-            document.getElementById('upload-text').innerText = "圖片優化壓縮中...";
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    const max_width = 1200; // 限制最大寬度以減小體積
-                    const scale = max_width / img.width;
-                    
-                    if (img.width > max_width) {
-                        canvas.width = max_width;
-                        canvas.height = img.height * scale;
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                    }
+    <div class="history-section">
+        <div class="history-title">
+            <span id="historyTitleText">最新 5 筆收件歷史紀錄</span>
+        </div>
+        <div id="historyContainer"></div>
+    </div>
+</div>
 
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // 以品質 0.7 壓縮成 jpeg 格式字串
-                    base64PhotoData = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+<script>
+    // 請將下方的 URL 替換成你自己的 GAS 部署網頁應用程式 URL
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhWDAB-zlRL_b7FhHLr41g_DPK8GhngaHulw79qpLgzCadwcVArk-oOh2N_iBSYVdHSg/exec";
+    
+    let currentMode = "收件";
+    let base64Photo = "";
+    let photoFileName = "";
 
-                    // 顯示預覽圖
-                    const previewZone = document.getElementById('photo-preview');
-                    previewZone.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}">`;
-                    document.getElementById('upload-text').innerText = "單據選擇完成！";
-                }
-            };
-        });
+    // 初始化日期
+    document.getElementById('date').valueAsDate = new Date();
 
-        // 3. 讀取最近 5 筆紀錄並渲染到下方
-        function fetchLatestRecords(type) {
-            const listZone = document.getElementById('records-list');
-            document.getElementById('latest-records-zone').style.display = 'block';
-            listZone.innerHTML = "<p style='color:#888; font-size:0.9rem; text-align:center; padding:10px;'>🔄 正在同步雲端最新紀錄...</p>";
-
-            // 發送 GET 請求向 GAS 索取資料
-            fetch(`${GAS_WEB_APP_URL}?type=${encodeURIComponent(type)}`)
-            .then(res => res.json())
-            .then(result => {
-                if(result.status === "success") {
-                    if(result.data.length === 0) {
-                        listZone.innerHTML = "<p style='color:#888; font-size:0.9rem; text-align:center; padding:10px;'>目前雲端尚無紀錄。</p>";
-                        return;
-                    }
-                    
-                    let htmlString = "";
-                    result.data.forEach(item => {
-                        // 判定是否為缺單號的待處理發件
-                        const isMissingTrack = (item.type === '發件' && (!item.trackCode || item.trackCode.trim() === '無' || item.trackCode.trim() === ''));
-                        const borderColors = isMissingTrack ? '#ffc107' : '#28a745';
-                        const statusText = isMissingTrack ? '⚠️ 待處理 (缺追蹤碼)' : '✅ 已完成';
-
-                        htmlString += `
-                            <div class="record-card" style="border-left-color: ${borderColors};">
-                                <div class="record-card-header">
-                                    <span>📅 日期：${item.date}</span>
-                                    <span style="font-weight:bold; color:${isMissingTrack ? '#dc3545' : '#28a745'}">${statusText}</span>
-                                </div>
-                                <div class="record-card-title">${item.shipper} ➔ ${item.receiver}</div>
-                                <div class="record-card-detail">說明：${item.summary || item.content || '無'}</div>
-                                ${item.trackCode ? `<div class="record-card-detail" style="color:#007bff; font-weight:500; margin-top:2px;">📦 物流：${item.logistics} (${item.trackCode})</div>` : ''}
-                                
-                                ${isMissingTrack ? `
-                                    <button type="button" class="fix-btn" onclick="enterUpdateMode('${item.id}', '${item.shipper}', '${item.receiver}', '${item.summary || item.content || ''}')">
-                                        ✏️ 點我補填追蹤碼與單據
-                                    </button>
-                                ` : ''}
-                            </div>
-                        `;
-                    });
-                    listZone.innerHTML = htmlString;
-                } else {
-                    listZone.innerHTML = "<p style='color:#dc3545; font-size:0.9rem;'>❌ 雲端歷史資料載入失敗。</p>";
-                }
-            })
-            .catch(err => {
-                listZone.innerHTML = "<p style='color:#dc3545; font-size:0.9rem;'>⚠️ 網路連線異常，無法載入歷史紀錄。</p>";
-            });
+    // 切換分頁
+    function switchTab(mode) {
+        currentMode = mode;
+        const tabs = document.querySelectorAll('.tab');
+        tabs[0].classList.toggle('active', mode === '收件');
+        tabs[1].classList.toggle('active', mode === '發件');
+        
+        // 變更欄位標籤與提示文字
+        if(mode === '收件') {
+            document.getElementById('shipperLabel').innerText = "寄件人 / 單位";
+            document.getElementById('shipper').placeholder = "請輸入寄件者資訊";
+            document.getElementById('phoneLabel').innerText = "聯絡電話";
+            document.getElementById('phone').placeholder = "請輸入電話號碼";
+            document.getElementById('historyTitleText').innerText = "最新 5 筆收件歷史紀錄";
+        } else {
+            document.getElementById('shipperLabel').innerText = "寄件同仁";
+            document.getElementById('shipper').placeholder = "請輸入交寄的外出同仁";
+            document.getElementById('phoneLabel').innerText = "物流 / 追蹤碼";
+            document.getElementById('phone').placeholder = "留空應事後補填";
+            document.getElementById('historyTitleText').innerText = "最新 5 筆發件歷史紀錄";
         }
+        
+        // 切換分頁時自動重新抓取對應的近5筆資料
+        fetchHistory();
+    }
 
-        // 4. 當同仁點擊「補填追蹤碼」按鈕時，啟動表單覆蓋更新模式
-        function enterUpdateMode(id, shipper, receiver, content) {
-            currentUpdateId = id;
-            
-            // 填回表單
-            document.getElementById('send-shipper').value = shipper;
-            document.getElementById('send-receiver').value = receiver;
-            document.getElementById('send-content').value = content;
-            
-            // 顯示提示橫幅，並將送出按鈕文字優化
-            document.getElementById('update-banner').style.display = 'block';
-            document.querySelector('.submit-btn').innerText = "確認補填更新";
+    // 處理圖片選擇與預覽
+    document.getElementById('photoFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        photoFileName = file.name;
+        document.getElementById('uploadText').innerText = "已選擇檔案：" + file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('preview').src = event.target.result;
+            document.getElementById('preview').style.display = "block";
+            base64Photo = event.target.result.split(',')[1];
+        };
+        reader.readAsDataURL(file);
+    });
 
-            // 滾動畫面回到最上方方便同仁填寫
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    // 表單提交處理
+    document.getElementById('mainForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        setLoading(true);
 
-        // 清空表單狀態
-        function resetFormInputs() {
-            currentUpdateId = "";
-            document.getElementById('mail-form').reset();
-            document.getElementById('send-date').value = today;
-            document.getElementById('receive-date').value = today;
-            document.getElementById('photo-preview').innerHTML = "";
-            base64PhotoData = "";
-            document.getElementById('upload-text').innerText = "點擊拍照 / 從相簿選擇單據";
-            document.getElementById('update-banner').style.display = 'none';
-            document.querySelector('.submit-btn').innerText = "確認歸檔備份";
-        }
+        const payload = {
+            action: "addData",
+            mode: currentMode,
+            date: document.getElementById('date').value,
+            shipper: document.getElementById('shipper').value,
+            receiver: document.getElementById('receiver').value,
+            summary: document.getElementById('summary').value,
+            phone: document.getElementById('phone').value,
+            photoData: base64Photo,
+            photoName: photoFileName
+        };
 
-        // 5. 表單送出：判定是全新建立還是更新，自動組裝檔名並 POST 給 GAS
-        document.getElementById('mail-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // 補填模式下，若沒有上傳新照片是允許的（只改單號），全新模式下則強制要有照片
-            if(!base64PhotoData && !currentUpdateId) {
-                alert("請先拍攝或從相簿上傳信件單據照片！");
-                return;
-            }
-
-            let payload = { mailType: currentType };
-            if(base64PhotoData) payload.photoData = base64PhotoData;
-            if(currentUpdateId) payload.updateId = currentUpdateId; // 如果有值，後端大腦就會改跑更新邏輯
-
-            let rawDate = "";
-
-            if (currentType === '發件') {
-                rawDate = document.getElementById('send-date').value;
-                const cleanDate = rawDate.replace(/-/g, '');
-                const shipper = document.getElementById('send-shipper').value || '未填';
-                const receiver = document.getElementById('send-receiver').value || '未填';
-                const logistics = document.getElementById('send-logistics').value;
-                const trackCode = document.getElementById('send-track-code').value;
-
-                if(!logistics && !currentUpdateId) {
-                    alert("請選擇寄件管道！");
-                    return;
-                }
-
-                // 自動格式化檔名公式
-                photoFileName = `${cleanDate}_發件_${shipper}_${receiver}_${logistics || '補填'}.jpg`;
-
-                payload.date = rawDate;
-                payload.shipper = shipper;
-                payload.receiver = receiver;
-                payload.content = document.getElementById('send-content').value;
-                payload.logistics = logistics;
-                payload.trackCode = trackCode;
-                payload.fileName = photoFileName;
+        fetch(GAS_WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            setLoading(false);
+            if(data.status === "success") {
+                alert("資料儲存成功！");
+                resetForm();
+                fetchHistory(); // 重新整理歷史紀錄
             } else {
-                rawDate = document.getElementById('receive-date').value;
-                const cleanDate = rawDate.replace(/-/g, '');
-                const shipper = document.getElementById('receive-shipper').value || '未填';
-                const summary = document.getElementById('receive-summary').value || '未填';
-                const receiver = document.getElementById('receive-receiver').value || '未填';
+                alert("儲存失敗：" + data.message);
+            }
+        })
+        .catch(err => {
+            setLoading(false);
+            alert("連線發生錯誤，請稍後再試！");
+            console.error(err);
+        });
+    });
 
-                photoFileName = `${cleanDate}_收件_${shipper}_${summary}_${receiver}.jpg`;
+    // 讀取歷史紀錄
+    function fetchHistory() {
+        const container = document.getElementById('historyContainer');
+        container.innerHTML = "<div style='text-align:center; padding:10px; color:#999;'>載入紀錄中...</div>";
 
-                payload.date = rawDate;
-                payload.shipper = shipper;
-                payload.summary = summary;
-                payload.phone = document.getElementById('receive-phone').value;
-                payload.receiver = receiver;
-                payload.fileName = photoFileName;
+        fetch(`${GAS_WEB_APP_URL}?action=getHistory&mode=${currentMode}`)
+        .then(res => res.json())
+        .then(data => {
+            updateHistoryUI(data);
+        })
+        .catch(err => {
+            container.innerHTML = "<div style='text-align:center; padding:10px; color:red;'>無法載入紀錄</div>";
+            console.error(err);
+        });
+    }
+
+    // 渲染歷史紀錄 UI
+    function updateHistoryUI(items) {
+        const container = document.getElementById('historyContainer');
+        container.innerHTML = "";
+
+        if(!items || items.length === 0) {
+            container.innerHTML = "<div style='text-align:center; padding:10px; color:#999;'>目前尚無紀錄</div>";
+            return;
+        }
+
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "history-card";
+            
+            const typeClass = item.mode === "收件" ? "type-receive" : "type-send";
+            
+            let detailHTML = "";
+            if(item.mode === "收件") {
+                detailHTML = `
+                    <span class="history-type ${typeClass}">${item.mode}</span>
+                    <div class="history-detail"><b>日期：</b>${item.date}</div>
+                    <div class="history-detail"><b>寄件人：</b>${item.shipper}</div>
+                    <div class="history-detail"><b>收件人：</b>${item.receiver}</div>
+                    <div class="history-detail"><b>摘要：</b>${item.summary}</div>
+                    <div class="history-detail"><b>電話：</b>${item.phone}</div>
+                `;
+            } else {
+                // 發件模式：若無物流單號則提供補填按鈕
+                const trackingText = item.phone ? item.phone : "<span style='color:#aaa; font-style:italic;'>未填寫</span>";
+                const trackingBtn = !item.phone ? `<button class="tracking-btn" onclick="promptTracking('${item.id}')">補填追蹤碼</button>` : "";
+                
+                detailHTML = `
+                    <span class="history-type ${typeClass}">${item.mode}</span>
+                    ${trackingBtn}
+                    <div class="history-detail"><b>日期：</b>${item.date}</div>
+                    <div class="history-detail"><b>寄件同仁：</b>${item.shipper}</div>
+                    <div class="history-detail"><b>收件人：</b>${item.receiver}</div>
+                    <div class="history-detail"><b>摘要：</b>${item.summary}</div>
+                    <div class="history-detail"><b>物流單號：</b>${trackingText}</div>
+                `;
             }
 
-            // 按鈕進入讀取狀態
-            const submitBtn = document.querySelector('.submit-btn');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "雲端資料處理中，請稍候...";
-            submitBtn.disabled = true;
+            // 如果有照片網址，加上照片看連結
+            if(item.photoUrl && item.photoUrl !== "") {
+                detailHTML += `<div class="history-detail" style="margin-top:5px;"><a href="${item.photoUrl}" target="_blank" style="color:var(--primary-color); font-weight:bold; text-decoration:none;">📂 查看附圖檔案</a></div>`;
+            }
 
-            // 送出 POST 請求給 GAS
-            fetch(GAS_WEB_APP_URL, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(result => {
-                if(result.status === "success") {
-                    alert(currentUpdateId ? "追蹤碼補填成功！雲端紀錄已完成同步更新。" : "全新信件歸檔成功！照片已自動命名儲存。");
-                    resetFormInputs();
-                    // 重新加載最近歷史紀錄
-                    fetchLatestRecords(currentType);
-                } else {
-                    alert("處理失敗：" + result.message);
-                    submitBtn.innerText = originalText;
-                    submitBtn.disabled = false;
-                }
-            })
-            .catch(err => {
-                alert("網路連線逾時或系統傳輸異常，請重新再試。");
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-            });
+            card.innerHTML = detailHTML;
+            container.appendChild(card);
         });
-    </script>
+    }
+
+    // 彈出視窗補填追蹤碼
+    function promptTracking(id) {
+        const trackingCode = prompt("請輸入該筆發件的物流追蹤碼：");
+        if (trackingCode === null) return; // 使用者按取消
+        if (trackingCode.trim() === "") {
+            alert("追蹤碼不能留空！");
+            return;
+        }
+
+        setLoading(true);
+        
+        fetch(GAS_WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateTracking",
+                id: id,
+                trackingCode: trackingCode
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            setLoading(false);
+            if(data.status === "success") {
+                alert("追蹤碼補填成功！");
+                fetchHistory();
+            } else {
+                alert("更新失敗：" + data.message);
+            }
+        })
+        .catch(err => {
+            setLoading(false);
+            alert("系統連線失敗");
+            console.error(err);
+        });
+    }
+
+    // 設定載入狀態
+    function setLoading(isLoading) {
+        document.getElementById('loadingStatus').style.display = isLoading ? "block" : "none";
+        document.getElementById('submitBtn').disabled = isLoading;
+        document.getElementById('submitBtn').style.opacity = isLoading ? "0.6" : "1";
+    }
+
+    // 重設表單
+    function resetForm() {
+        document.getElementById('shipper').value = "";
+        document.getElementById('receiver').value = "";
+        document.getElementById('summary').value = "";
+        document.getElementById('phone').value = "";
+        document.getElementById('photoFile').value = "";
+        document.getElementById('preview').src = "";
+        document.getElementById('preview').style.display = "none";
+        document.getElementById('uploadText').innerText = "📸 點擊拍照或選擇單據檔案";
+        base64Photo = "";
+        photoFileName = "";
+        document.getElementById('date').valueAsDate = new Date();
+    }
+
+    // 網頁開啟時預先載入一次歷史紀錄
+    window.onload = function() {
+        fetchHistory();
+    };
+</script>
+
 </body>
 </html>
