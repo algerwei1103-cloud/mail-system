@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>實體信件管理系統</title>
     <style>
-        /* CSS 變數：定義衛達專屬的流暢 APP 視覺 */
+        /* CSS 變數：定義專屬的流暢 APP 視覺 */
         :root {
             --primary-color: #007bff;
             --bg-color: #f4f6f9;
@@ -103,7 +103,7 @@
                 <div class="input-item"><label>日期</label><input type="date" id="send-date"></div>
                 <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder="請輸入寄件人"></div>
                 <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder="請輸入收件人"></div>
-                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder="例：合約正本、認證公文"></div>
+                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder=""></div>
                 <div class="input-item">
                     <label>寄件管道</label>
                     <select id="send-logistics">
@@ -117,17 +117,17 @@
                     </select>
                 </div>
                 <div class="input-item" id="track-code-item">
-                    <label>寄件追蹤碼 (單號) <span style="color:#888;font-weight:normal;">(若無請填"無")</span></label>
-                    <input type="text" id="send-track-code" placeholder="請輸入物流單號">
+                    <label>寄件追蹤碼<span style="color:#888;font-weight:normal;">(若無請填"無")</span></label>
+                    <input type="text" id="send-track-code" placeholder="">
                 </div>
             </div>
 
             <div id="group-receive" class="form-group-toggle">
                 <div class="input-item"><label>日期</label><input type="date" id="receive-date"></div>
-                <div class="input-item"><label>寄件人 (外部對象)</label><input type="text" id="receive-shipper" placeholder="請輸入寄件單位或個人"></div>
-                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary" placeholder="例：五月份發票、主管機關公文"></div>
-                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone" placeholder="請輸入對方或貨運電話"></div>
-                <div class="input-item"><label>收件人 (內部同仁)</label><input type="text" id="receive-receiver" placeholder="請輸入公司內部收件人"></div>
+                <div class="input-item"><label>寄件人（外部對象）</label><input type="text" id="receive-shipper" placeholder="請輸入寄件單位或個人"></div>
+                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary" placeholder=""></div>
+                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone" placeholder=""></div>
+                <div class="input-item"><label>收件人（內部同仁）</label><input type="text" id="receive-receiver" placeholder="請輸入公司內部收件人"></div>
             </div>
 
             <div class="photo-upload-area">
@@ -146,7 +146,7 @@
 
         <section id="latest-records-zone" style="display: none; margin-bottom: 40px;">
             <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: #555; display: flex; align-items: center; gap: 6px;">
-                <span>📋</span> 最近 5 筆動態紀錄 (避免重複刊登)
+                <span>📋</span> 最近 5 筆紀錄
             </h3>
             <div id="records-list"></div>
         </section>
