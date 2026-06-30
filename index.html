@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>實體信件管理系統</title>
     <style>
-        /* CSS 變數：定義衛達專屬的流暢 APP 視覺 */
         :root {
             --primary-color: #007bff;
             --bg-color: #f4f6f9;
@@ -16,26 +15,26 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); padding: 15px; padding-bottom: 100px; }
 
-        /* 類 APP 容器 */
         .app-container { max-width: 500px; margin: 0 auto; }
         .app-header { margin-bottom: 20px; text-align: center; }
         .app-header h2 { font-size: 1.4rem; color: #1a1a1a; }
 
-        /* 大按鈕分類選擇器 */
         .type-selector { display: flex; gap: 15px; margin-bottom: 20px; }
         .type-btn { flex: 1; position: relative; cursor: pointer; }
         .type-btn input[type="radio"] { position: absolute; opacity: 0; }
         .btn-content { 
-            background: var(--card-bg); padding: 18px; text-align: center; border-radius: 12px;
-            font-size: 1.1rem; font-weight: bold; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.2s;
+            background: var(--card-bg);
+            padding: 18px; text-align: center; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
         .type-btn input[type="radio"]:checked + .btn-content {
-            border-color: var(--primary-color); color: var(--primary-color); background: #e6f0ff; transform: scale(0.98);
+            border-color: var(--primary-color);
+            color: var(--primary-color); background: #e6f0ff; transform: scale(0.98);
         }
 
-        /* 表單與輸入框 */
         .main-form { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .form-group-toggle { display: none; } /* 預設隱藏，由 JS 控制顯示 */
+        .form-group-toggle { display: none; }
         .form-group-toggle.is-active { display: block; animation: fadeIn 0.3s ease; }
 
         .input-item { margin-bottom: 15px; }
@@ -45,19 +44,19 @@
         }
         .input-item input:focus, .input-item select:focus { border-color: var(--primary-color); }
 
-        /* 提示修改狀態條 */
         .update-mode-banner { display: none; background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; border-left: 5px solid #ffc107; }
 
-        /* 拍照上傳區 */
         .photo-upload-area { margin-top: 20px; border: 2px dashed #bbb; border-radius: 12px; padding: 20px; text-align: center; background: #fafafa; }
         .camera-btn input[type="file"] { display: none; }
         .upload-placeholder { cursor: pointer; }
         .upload-placeholder i { font-size: 2rem; display: block; margin-bottom: 5px; }
         
-        /* 圖片預覽 */
-        .preview-box img { max-width: 100%; max-height: 200px; margin-top: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        /* 多圖預覽排版 */
+        .preview-box { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; }
+        .preview-container { position: relative; width: 80px; height: 80px; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .preview-container img { width: 100%; height: 100%; object-fit: cover; }
+        .remove-photo-btn { position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.7); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; line-height: 18px; text-align: center; }
 
-        /* 底部固定大按鈕 */
         .submit-btn {
             position: fixed; bottom: 15px; left: 15px; right: 15px; max-width: 470px; margin: 0 auto;
             height: 54px; background: var(--primary-color); color: white; border: none; border-radius: 27px;
@@ -65,7 +64,6 @@
         }
         .submit-btn:active { background: #0056b3; }
 
-        /* 歷史紀錄卡片視覺 */
         .record-card { background: white; padding: 14px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.04); border-left: 5px solid #ddd; }
         .record-card-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 6px; }
         .record-card-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 4px; color: #1a1a1a; }
@@ -79,7 +77,7 @@
 
     <div class="app-container">
         <header class="app-header">
-            <h2>實體信件智慧管理系統</h2>
+            <h2>實體信件管理系統</h2>
         </header>
 
         <section class="type-selector">
@@ -96,14 +94,14 @@
         <form id="mail-form" class="main-form" style="display: none;">
             
             <div id="update-banner" class="update-mode-banner">
-                ✏️ 目前正在執行「補填追蹤碼」模式，送出後將直接更新原紀錄。
+                ✏️ 目前正在執行「修改與補填」模式，送出後將直接更新原紀錄內的所有修改。
             </div>
 
             <div id="group-send" class="form-group-toggle">
                 <div class="input-item"><label>日期</label><input type="date" id="send-date"></div>
-                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder=""></div>
-                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder=""></div>
-                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder=""></div>
+                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper"></div>
+                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver"></div>
+                <div class="input-item"><label>內容說明</label><input type="text" id="send-content"></div>
                 <div class="input-item">
                     <label>寄件管道</label>
                     <select id="send-logistics">
@@ -111,6 +109,7 @@
                         <option value="郵局">郵局</option>
                         <option value="新竹物流">新竹物流</option>
                         <option value="蝦皮">蝦皮</option>
+                        <option value="順豐">順豐</option>
                         <option value="親送">親送</option>
                         <option value="自取">自取</option>
                         <option value="其他">其他</option>
@@ -118,30 +117,31 @@
                 </div>
                 <div class="input-item" id="track-code-item">
                     <label>寄件追蹤碼<span style="color:#888;font-weight:normal;">（若無請填"無"）</span></label>
-                    <input type="text" id="send-track-code" placeholder="">
+                    <input type="text" id="send-track-code">
                 </div>
+                <div class="input-item"><label>信件經辦人</label><input type="text" id="send-handler" placeholder=""></div>
             </div>
 
             <div id="group-receive" class="form-group-toggle">
                 <div class="input-item"><label>日期</label><input type="date" id="receive-date"></div>
-                <div class="input-item"><label>寄件人（外部對象）</label><input type="text" id="receive-shipper" placeholder=""></div>
-                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary" placeholder=""></div>
-                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone" placeholder=""></div>
-                <div class="input-item"><label>收件人（內部同仁）</label><input type="text" id="receive-receiver" placeholder=""></div>
+                <div class="input-item"><label>寄件人（外部對象）</label><input type="text" id="receive-shipper"></div>
+                <div class="input-item"><label>摘要說明</label><input type="text" id="receive-summary"></div>
+                <div class="input-item"><label>聯絡電話</label><input type="tel" id="receive-phone"></div>
+                <div class="input-item"><label>收件人（內部同仁）</label><input type="text" id="receive-receiver"></div>
             </div>
 
             <div class="photo-upload-area">
                 <label class="camera-btn">
-                    <input type="file" accept="image/*" id="photo-input">
+                    <input type="file" accept="image/*" id="photo-input" multiple>
                     <div class="upload-placeholder">
                         <i>📷</i>
-                        <p id="upload-text">點擊拍照 / 從相簿選擇</p>
+                        <p id="upload-text">點擊拍照 / 可選擇多張照片</p>
                     </div>
                 </label>
                 <div id="photo-preview" class="preview-box"></div>
             </div>
 
-            <button type="submit" class="submit-btn">確認歸檔備份</button>
+            <button type="submit" class="submit-btn">確認歸檔紀錄</button>
         </form>
 
         <section id="latest-records-zone" style="display: none; margin-bottom: 40px;">
@@ -156,9 +156,9 @@
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjI6guXGetyUZIscVeg4pPn8TKPtRGx1j5o2jGo4sOGOpD1IWsIBkJcS6Sa0Sf6C_D/exec"; 
 
         let currentType = "";
-        let base64PhotoData = ""; 
-        let photoFileName = "";   
+        let uploadedPhotos = []; // 用來存儲多張圖片的 Base64 與檔名物件
         let currentUpdateId = ""; 
+        let globalRecordsCache = []; // 快取下載的紀錄，供還原填寫使用
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('send-date').value = today;
@@ -177,13 +177,11 @@
                     document.getElementById('group-receive').classList.add('is-active');
                     document.getElementById('group-send').classList.remove('is-active');
                 }
-
                 fetchLatestRecords(currentType);
             });
         });
 
         document.getElementById('send-logistics').addEventListener('change', (e) => {
-            const trackItem = document.getElementById('track-code-item');
             if(e.target.value === '親送' || e.target.value === '自取') {
                 document.getElementById('send-track-code').value = '無';
             } else if(document.getElementById('send-track-code').value === '無') {
@@ -191,51 +189,89 @@
             }
         });
 
+        // 處裡多圖選擇與壓縮
         document.getElementById('photo-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
 
-            document.getElementById('upload-text').innerText = "圖片壓縮中...";
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    const canvas = document.createElement('canvas');
-                    const max_width = 1200; 
-                    const scale = max_width / img.width;
-                    
-                    if (img.width > max_width) {
-                        canvas.width = max_width;
-                        canvas.height = img.height * scale;
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+            document.getElementById('upload-text').innerText = "圖片多圖壓縮中...";
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        const max_width = 1200; 
+                        const scale = max_width / img.width;
+                        
+                        if (img.width > max_width) {
+                            canvas.width = max_width;
+                            canvas.height = img.height * scale;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        const base64Data = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+                        
+                        // 將照片塞入陣列
+                        uploadedPhotos.push({
+                            base64: base64Data,
+                            blobUrl: canvas.toDataURL('image/jpeg')
+                        });
+
+                        renderPhotoPreviews();
                     }
-
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    base64PhotoData = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
-
-                    const previewZone = document.getElementById('photo-preview');
-                    previewZone.innerHTML = `<img src="${canvas.toDataURL('image/jpeg')}">`;
-                    document.getElementById('upload-text').innerText = "單據選擇完成！";
-                }
-            };
+                };
+            });
+            // 清空 input 讓重複選相同檔案也能觸發
+            e.target.value = "";
         });
 
-        // 3. 讀取最近 5 筆紀錄並渲染到下方
+        // 渲染多張照片縮圖
+        function renderPhotoPreviews() {
+            const previewZone = document.getElementById('photo-preview');
+            previewZone.innerHTML = "";
+            
+            uploadedPhotos.forEach((photo, idx) => {
+                const container = document.createElement('div');
+                container.className = 'preview-container';
+                container.innerHTML = `
+                    <img src="${photo.blobUrl}">
+                    <button type="button" class="remove-photo-btn" onclick="removePhoto(${idx})">✕</button>
+                `;
+                previewZone.appendChild(container);
+            });
+
+            if(uploadedPhotos.length > 0) {
+                document.getElementById('upload-text').innerText = `已選取 ${uploadedPhotos.length} 張照片！`;
+            } else {
+                document.getElementById('upload-text').innerText = "點擊拍照 / 可選擇多張照片";
+            }
+        }
+
+        // 移除已選特定照片
+        function removePhoto(index) {
+            uploadedPhotos.splice(index, 1);
+            renderPhotoPreviews();
+        }
+
         function fetchLatestRecords(type) {
             const listZone = document.getElementById('records-list');
             document.getElementById('latest-records-zone').style.display = 'block';
             listZone.innerHTML = "<p style='color:#888; font-size:0.9rem; text-align:center; padding:10px;'>🔄 正在同步雲端最新紀錄...</p>";
-
+            
             fetch(`${GAS_WEB_APP_URL}?type=${encodeURIComponent(type)}`)
             .then(res => res.json())
             .then(result => {
                 if(result.status === "success") {
+                    globalRecordsCache = result.data; // 將資料快取起來
                     if(result.data.length === 0) {
                         listZone.innerHTML = "<p style='color:#888; font-size:0.9rem; text-align:center; padding:10px;'>目前雲端尚無紀錄。</p>";
                         return;
@@ -244,16 +280,17 @@
                     let htmlString = "";
                     result.data.forEach(item => {
                         const isMissingTrack = (item.type === '發件' && (!item.trackCode || item.trackCode.trim() === '無' || item.trackCode.trim() === ''));
-                        const borderColors = isMissingTrack ? '#ffc107' : '#28a745';
+                        const borderColors = isMissingTrack ? '#ffc107' : '#007bff';
                         const statusText = isMissingTrack ? '⚠️ 待處理 (缺追蹤碼)' : '✅ 已完成';
 
-                        // ✨ 這裡做了修正：如果是收件，就把原來的「物流」字樣修正為「電話：09xxxxxxxx」且去除了括號
                         let subDetailHtml = "";
-                        if (item.type === '發件' && item.trackCode) {
-                            subDetailHtml = `<div class="record-card-detail" style="color:#007bff; font-weight:500; margin-top:2px;">📦 物流：${item.logistics} (${item.trackCode})</div>`;
+                        if (item.type === '發件') {
+                            subDetailHtml = `<div class="record-card-detail" style="color:#007bff; font-weight:500; margin-top:2px;">📦 物流：${item.logistics || '未填'} (${item.trackCode || '無'})</div>`;
                         } else if (item.type === '收件' && item.phone) {
                             subDetailHtml = `<div class="record-card-detail" style="color:#6c757d; font-weight:500; margin-top:2px;">📞 電話：${item.phone}</div>`;
                         }
+
+                        let handlerHtml = (item.type === '發件' && item.handler) ? `<div class="record-card-detail" style="color:#28a745; font-weight:500;">👤 經辦人：${item.handler}</div>` : '';
 
                         htmlString += `
                             <div class="record-card" style="border-left-color: ${borderColors};">
@@ -264,12 +301,11 @@
                                 <div class="record-card-title">${item.shipper} ➔ ${item.receiver}</div>
                                 <div class="record-card-detail">說明：${item.summary || item.content || '無'}</div>
                                 ${subDetailHtml}
+                                ${handlerHtml}
                                 
-                                ${isMissingTrack ? `
-                                    <button type="button" class="fix-btn" onclick="enterUpdateMode('${item.id}', '${item.shipper}', '${item.receiver}', '${item.summary || item.content || ''}')">
-                                        ✏️ 點我補填追蹤碼與單據
-                                    </button>
-                                ` : ''}
+                                <button type="button" class="fix-btn" onclick="enterUpdateMode('${item.id}')">
+                                    ✏️ 點我修正/補填此筆紀錄
+                                </button>
                             </div>
                         `;
                     });
@@ -283,13 +319,30 @@
             });
         }
 
-        function enterUpdateMode(id, shipper, receiver, content) {
+        // 解鎖全面修改：還原該 ID 的所有欄位至表單中
+        function enterUpdateMode(id) {
             currentUpdateId = id;
-            document.getElementById('send-shipper').value = shipper;
-            document.getElementById('send-receiver').value = receiver;
-            document.getElementById('send-content').value = content;
+            const target = globalRecordsCache.find(item => item.id.toString() === id.toString());
+            if(!target) return;
+
+            if(currentType === '發件') {
+                document.getElementById('send-date').value = target.date;
+                document.getElementById('send-shipper').value = target.shipper;
+                document.getElementById('send-receiver').value = target.receiver;
+                document.getElementById('send-content').value = target.content || target.summary;
+                document.getElementById('send-logistics').value = target.logistics;
+                document.getElementById('send-track-code').value = target.trackCode;
+                document.getElementById('send-handler').value = target.handler;
+            } else {
+                document.getElementById('receive-date').value = target.date;
+                document.getElementById('receive-shipper').value = target.shipper;
+                document.getElementById('receive-summary').value = target.summary || target.content;
+                document.getElementById('receive-phone').value = target.phone;
+                document.getElementById('receive-receiver').value = target.receiver;
+            }
+
             document.getElementById('update-banner').style.display = 'block';
-            document.querySelector('.submit-btn').innerText = "確認補填更新";
+            document.querySelector('.submit-btn').innerText = "確認修正";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -299,8 +352,8 @@
             document.getElementById('send-date').value = today;
             document.getElementById('receive-date').value = today;
             document.getElementById('photo-preview').innerHTML = "";
-            base64PhotoData = "";
-            document.getElementById('upload-text').innerText = "點擊拍照 / 從相簿選擇單據";
+            uploadedPhotos = [];
+            document.getElementById('upload-text').innerText = "點擊拍照 / 可選擇多張照片";
             document.getElementById('update-banner').style.display = 'none';
             document.querySelector('.submit-btn').innerText = "確認歸檔備份";
         }
@@ -308,13 +361,13 @@
         document.getElementById('mail-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            if(!base64PhotoData && !currentUpdateId) {
-                alert("請先拍攝或從相簿上傳信件單據照片！");
+            // 允許修改模式時不一定要重新傳照片
+            if(uploadedPhotos.length === 0 && !currentUpdateId) {
+                alert("請先拍攝或選取信件照片！");
                 return;
             }
 
-            let payload = { mailType: currentType };
-            if(base64PhotoData) payload.photoData = base64PhotoData;
+            let payload = { mailType: currentType, photos: [] };
             if(currentUpdateId) payload.updateId = currentUpdateId; 
 
             let rawDate = "";
@@ -324,15 +377,17 @@
                 const cleanDate = rawDate.replace(/-/g, '');
                 const shipper = document.getElementById('send-shipper').value || '未填';
                 const receiver = document.getElementById('send-receiver').value || '未填';
-                const logistics = document.getElementById('send-logistics').value;
+                const logistics = document.getElementById('send-logistics').value || '未填';
                 const trackCode = document.getElementById('send-track-code').value;
+                const handler = document.getElementById('send-handler').value || '未填';
 
-                if(!logistics && !currentUpdateId) {
-                    alert("請選擇寄件管道！");
-                    return;
-                }
-
-                photoFileName = `${cleanDate}_發件_${shipper}_${receiver}_${logistics || '補填'}.jpg`;
+                // 包裝多張照片的檔案名稱物件
+                uploadedPhotos.forEach((p, index) => {
+                    payload.photos.push({
+                        base64: p.base64,
+                        fileName: `${cleanDate}_發件_${shipper}_${receiver}_${logistics}_副檔${index+1}.jpg`
+                    });
+                });
 
                 payload.date = rawDate;
                 payload.shipper = shipper;
@@ -340,7 +395,7 @@
                 payload.content = document.getElementById('send-content').value;
                 payload.logistics = logistics;
                 payload.trackCode = trackCode;
-                payload.fileName = photoFileName;
+                payload.handler = handler;
             } else {
                 rawDate = document.getElementById('receive-date').value;
                 const cleanDate = rawDate.replace(/-/g, '');
@@ -348,19 +403,24 @@
                 const summary = document.getElementById('receive-summary').value || '未填';
                 const receiver = document.getElementById('receive-receiver').value || '未填';
 
-                photoFileName = `${cleanDate}_收件_${shipper}_${summary}_${receiver}.jpg`;
+                uploadedPhotos.forEach((p, index) => {
+                    payload.photos.push({
+                        base64: p.base64,
+                        fileName: `${cleanDate}_收件_${shipper}_${summary}_${receiver}_副檔${index+1}.jpg`
+                    });
+                });
 
                 payload.date = rawDate;
                 payload.shipper = shipper;
                 payload.summary = summary;
                 payload.phone = document.getElementById('receive-phone').value;
                 payload.receiver = receiver;
-                payload.fileName = photoFileName;
+                payload.handler = ""; 
             }
 
             const submitBtn = document.querySelector('.submit-btn');
             const originalText = submitBtn.innerText;
-            submitBtn.innerText = "雲端資料處理中，請稍候...";
+            submitBtn.innerText = "資料處理中，請稍候...";
             submitBtn.disabled = true;
 
             fetch(GAS_WEB_APP_URL, {
@@ -370,7 +430,7 @@
             .then(res => res.json())
             .then(result => {
                 if(result.status === "success") {
-                    alert(currentUpdateId ? "追蹤碼補填成功！雲端紀錄已完成同步更新。" : "全新信件歸檔成功！照片已自動命名儲存。");
+                    alert(currentUpdateId ? "紀錄修正成功！雲端已同步" : "信件資訊歸檔成功！照片皆已命名上傳");
                     resetFormInputs();
                     fetchLatestRecords(currentType);
                 } else {
