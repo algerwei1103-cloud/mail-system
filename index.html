@@ -101,9 +101,9 @@
 
             <div id="group-send" class="form-group-toggle">
                 <div class="input-item"><label>日期</label><input type="date" id="send-date"></div>
-                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder="請輸入寄件人"></div>
-                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder="請輸入收件人"></div>
-                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder="例：合約正本、認證公文"></div>
+                <div class="input-item"><label>寄件人</label><input type="text" id="send-shipper" placeholder=""></div>
+                <div class="input-item"><label>收件人</label><input type="text" id="send-receiver" placeholder=""></div>
+                <div class="input-item"><label>內容說明</label><input type="text" id="send-content" placeholder=""></div>
                 <div class="input-item">
                     <label>寄件管道</label>
                     <select id="send-logistics">
@@ -135,7 +135,7 @@
                     <input type="file" accept="image/*" id="photo-input">
                     <div class="upload-placeholder">
                         <i>📷</i>
-                        <p id="upload-text">點擊拍照 / 從相簿選擇單據</p>
+                        <p id="upload-text">點擊拍照 / 從相簿選擇</p>
                     </div>
                 </label>
                 <div id="photo-preview" class="preview-box"></div>
@@ -153,7 +153,7 @@
     </div>
 
     <script>
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyhWDAB-zlRL_b7FhHLr41g_DPK8GhngaHulw79qpLgzCadwcVArk-oOh2N_iBSYVdHSg/exec"; 
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzjI6guXGetyUZIscVeg4pPn8TKPtRGx1j5o2jGo4sOGOpD1IWsIBkJcS6Sa0Sf6C_D/exec"; 
 
         let currentType = "";
         let base64PhotoData = ""; 
